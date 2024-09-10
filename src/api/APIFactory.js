@@ -36,6 +36,7 @@ import OpenWithAPI from './OpenWith';
 import MetadataQueryAPI from './MetadataQuery';
 import BoxEditAPI from './box-edit';
 import IntelligenceAPI from './Intelligence';
+import TaxonomyAPI from './Taxonomy';
 import { DEFAULT_HOSTNAME_API, DEFAULT_HOSTNAME_UPLOAD, TYPE_FOLDER, TYPE_FILE, TYPE_WEBLINK } from '../constants';
 import type { ItemType } from '../common/types/core';
 import type { APIOptions } from '../common/types/api';
@@ -203,6 +204,11 @@ class APIFactory {
      * @property {IntelligenceAPI}
      */
     intelligenceAPI: IntelligenceAPI;
+
+    /**
+     * @property {TaxonomyAPI}
+     */
+    taxonomyAPI: TaxonomyAPI;
 
     /**
      * [constructor]
@@ -376,6 +382,11 @@ class APIFactory {
         if (this.intelligenceAPI) {
             this.intelligenceAPI.destroy();
             delete this.intelligenceAPI;
+        }
+
+        if (this.taxonomyAPI) {
+            this.taxonomyAPI.destroy();
+            delete this.taxonomyAPI;
         }
 
         if (destroyCache) {
@@ -854,6 +865,18 @@ class APIFactory {
 
         this.intelligenceAPI = new IntelligenceAPI(this.options);
         return this.intelligenceAPI;
+    }
+
+    /**
+     * @return {TaxonomyAPI} TaxonomyAPI instance
+     */
+    getTaxonomyAPI(shouldDestroy: boolean): TaxonomyAPI {
+        if (shouldDestroy) {
+            this.destroy();
+        }
+
+        this.taxonomyAPI = new TaxonomyAPI(this.options);
+        return this.taxonomyAPI;
     }
 }
 

@@ -6,8 +6,9 @@ import * as React from 'react';
 import flow from 'lodash/flow';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { InlineError, LoadingIndicator } from '@box/blueprint-web';
-import { AddMetadataTemplateDropdown , MetadataEmptyState } from '@box/metadata-editor';
+import { AddMetadataTemplateDropdown, MetadataEmptyState, SingleLevelTaxonomyField } from '@box/metadata-editor';
 
+import { useCallback } from 'react';
 import API from '../../api';
 import SidebarContent from './SidebarContent';
 import { withAPIContext } from '../common/api-context';
@@ -92,6 +93,48 @@ function MetadataSidebarRedesign({
     const showEditor = file && templates && editors;
     const showEmptyState = showEditor && editors.length === 0;
 
+    const [taxonomyValue, setTaxonomyValue] = React.useState(undefined);
+
+    const mockFetcher = useCallback(async () => {
+        console.log('test');
+        try {
+            const response = await api.getTaxonomyAPI(true).get();
+
+            console.log(response);
+        } catch (e) {
+            console.log(e);
+        }
+        console.log('called');
+
+        const raw = {
+            result_count: 1,
+            next_marker: '14d3d433-c77f-49c5-b146-9dea370f6e32',
+            entries: [
+                {
+                    id: '14d3d433-c77f-49c5-b146-9dea370f6e32',
+                    displayName: 'Poland',
+                    level: 1,
+                    parentId: 'cb065cc7-023f-426c-b55f-317eb5e13648',
+                    taxonomyId: '0ecafd16-f266-4cc0-86f9-8e120913c75c',
+                    deprecated: false,
+                    deleted: false,
+                    $createdAt: '1970-01-01T00:00:00.000Z',
+                    $createdBy: '123',
+                    $updatedAt: '2024-01-01T00:00:00.000Z',
+                    $updatedBy: '456',
+                },
+            ],
+        };
+
+        return Promise.resolve({
+            marker: null,
+            options: raw.entries.map(entry => ({
+                id: entry.id,
+                value: entry.displayName,
+            })),
+        });
+    }, []);
+
     return (
         <SidebarContent
             actions={metadataDropdown}
@@ -101,6 +144,13 @@ function MetadataSidebarRedesign({
             title={formatMessage(messages.sidebarMetadataTitle)}
         >
             <div className="bcs-MetadataSidebarRedesign-content">
+                <SingleLevelTaxonomyField
+                    value={taxonomyValue}
+                    onValueChange={setTaxonomyValue}
+                    label="Field"
+                    defaultFetcher={mockFetcher}
+                    searchFetcher={mockFetcher}
+                />
                 {errorMessageDisplay}
                 {status === STATUS.LOADING && (
                     <LoadingIndicator aria-label={formatMessage(messages.loading)} data-testid="loading" />
