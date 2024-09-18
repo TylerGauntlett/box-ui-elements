@@ -8,7 +8,8 @@ class Taxonomy extends Base {
      */
     async get() {
         const url =
-            'https://api.app-tgauntlett.monolith-devpod.apps-global.gcp001.dev.box.net/2.0/metadata_taxonomies/namespace_123/geography/nodes';
+            // 'https://api.app-tgauntlett.monolith-devpod.apps-global.gcp001.dev.box.net/2.0/metadata_taxonomies/namespace/taxonomy_key/nodes/node_id';
+            'https://api.app-tgauntlett.monolith-devpod.apps-global.gcp001.dev.box.net/2.0/metadata_templates/enterprise_123/geography/fields/country/options?level=3';
         const id = 'file_10464733522';
 
         try {
